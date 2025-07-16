@@ -1,7 +1,4 @@
-// standingsData.js - Tournament standings and match results data
-// TODO: Replace with API calls for real-time data
-
-// CHANGE THIS: Update placement points system - Admin controlled
+// TODO: I have to replace with API calls for real-time data
 // Placement Point Criteria: 1st=10, 2nd=6, 3rd=5, 4th=4, 5th=3, 6th=2, 7th=1, 8th=1, 9th-16th=0
 export const placementPoints = {
   1: 10,  // Winner (WWCD)
@@ -27,300 +24,86 @@ export const getPlacementPoints = (placement) => {
   return placementPoints[placement] || 0;
 };
 
-// CHANGE THIS: Update teams data as needed
-export const teamsData = [
-  { id: 1, name: "Team Alpha", logo: "🔥" },
-  { id: 2, name: "Team Beta", logo: "⚡" },
-  { id: 3, name: "Team Gamma", logo: "🌟" },
-  { id: 4, name: "Team Delta", logo: "💎" },
-  { id: 5, name: "Team Echo", logo: "🚀" },
-  { id: 6, name: "Team Foxtrot", logo: "🎯" },
-  { id: 7, name: "Team Golf", logo: "🔮" },
-  { id: 8, name: "Team Hotel", logo: "⭐" },
-  { id: 9, name: "Team India", logo: "🎪" },
-  { id: 10, name: "Team Juliet", logo: "🎭" },
-  { id: 11, name: "Team Kilo", logo: "🎨" },
-  { id: 12, name: "Team Lima", logo: "🎲" },
-  { id: 13, name: "Team Mike", logo: "🎸" },
-  { id: 14, name: "Team November", logo: "🎺" },
-  { id: 15, name: "Team Oscar", logo: "🎻" },
-  { id: 16, name: "Team Papa", logo: "🥁" }
-];
+// Helper function to create match result entry
+export const createMatchResult = (teamId, kills, placement) => ({
+  teamId,
+  kills,
+  placement,
+  placementPoints: getPlacementPoints(placement),
+  totalPoints: kills + getPlacementPoints(placement)
+});
 
-// CHANGE THIS: Track which matches are completed
-export const matchCompletionStatus = {
-  day1: {
-    match1: true,
-    match2: true,
-    match3: true,
-    match4: true,
-    match5: true,
-    match6: true
-  },
-  day2: {
-    match1: true,
-    match2: true,
-    match3: true,
-    match4: false, // Currently ongoing or upcoming
-    match5: false,
-    match6: false
-  },
-  day3: {
-    match1: false,
-    match2: false,
-    match3: false,
-    match4: false,
-    match5: false,
-    match6: false
-  }
+// Helper function to generate default team standings for incomplete matches
+export const generateDefaultTeamResults = (teamIds) => {
+  return teamIds.map((teamId, index) => 
+    createMatchResult(teamId, 0, index + 1)
+  );
 };
 
-// CHANGE THIS: Update match results data - 6 matches per day
-// Admin Note: When updating standings, modify the match results below
-// Ensure placementPoints follow the criteria: 10,6,5,4,3,2,1,1,0 for positions 1-8,9-16
-// totalPoints = kills + placementPoints
-export const matchResults = {
+// CHANGE THIS: Update teams data as needed
+export const teamsData = [
+  { id: 1, name: "Team RNTX", logo: "⚡" },
+  { id: 2, name: "Team SOUL", logo: "🥁" },
+  { id: 3, name: "Team GODLIKE", logo: "🌟" },
+  { id: 4, name: "Team ORANGUTAN", logo: "💎" },
+  { id: 5, name: "Team GDR", logo: "🚀" },
+  { id: 6, name: "Team K9", logo: "🎯" },
+  { id: 7, name: "Team TR", logo: "🔮" },
+  { id: 8, name: "Team RGE", logo: "⭐" },
+  { id: 9, name: "Team 8BIT", logo: "🎪" },
+  { id: 10, name: "Team VXT", logo: "🎭" },
+  { id: 11, name: "Team CK", logo: "🎨" },
+  { id: 12, name: "Team TT", logo: "🎲" },
+  { id: 13, name: "Team HH", logo: "🎸" },
+  { id: 14, name: "Team VE", logo: "🎺" },
+  { id: 15, name: "Team NONX", logo: "🎻" },
+  { id: 16, name: "Team LE ", logo: "🥁" }
+];
+
+export const teamIds = teamsData.map(team => team.id);
+
+export const tournamentConfig = {
+  totalDays: 3,
+  matchesPerDay: 6,
+  teamsPerMatch: 16
+};
+
+const generateMatchStatus = (day, completedMatches = 0) => {
+  const status = {};
+  for (let i = 1; i <= tournamentConfig.matchesPerDay; i++) {
+    status[`match${i}`] = i <= completedMatches;
+  }
+  return status;
+};
+
+export const matchCompletionStatus = {
+  day1: generateMatchStatus(1, 6), // All 6 matches completed
+  day2: generateMatchStatus(2, 6), // All 6 matches completed  
+  day3: generateMatchStatus(3, 1)  // Only 1 match completed, 5 pending
+};
+
+
+// Simplified match data: [teamId, kills, placement] - helper functions calculate the rest
+const rawMatchData = {
   day1: {
-    match1: [
-      { teamId: 1, kills: 8, placement: 1, placementPoints: 10, totalPoints: 18 },
-      { teamId: 2, kills: 6, placement: 2, placementPoints: 6, totalPoints: 12 },
-      { teamId: 3, kills: 4, placement: 3, placementPoints: 5, totalPoints: 9 },
-      { teamId: 4, kills: 3, placement: 4, placementPoints: 4, totalPoints: 7 },
-      { teamId: 5, kills: 5, placement: 5, placementPoints: 3, totalPoints: 8 },
-      { teamId: 6, kills: 2, placement: 6, placementPoints: 2, totalPoints: 4 },
-      { teamId: 7, kills: 1, placement: 7, placementPoints: 1, totalPoints: 2 },
-      { teamId: 8, kills: 3, placement: 8, placementPoints: 1, totalPoints: 4 },
-      { teamId: 9, kills: 2, placement: 9, placementPoints: 0, totalPoints: 2 },
-      { teamId: 10, kills: 1, placement: 10, placementPoints: 0, totalPoints: 1 },
-      { teamId: 11, kills: 0, placement: 11, placementPoints: 0, totalPoints: 0 },
-      { teamId: 12, kills: 1, placement: 12, placementPoints: 0, totalPoints: 1 },
-      { teamId: 13, kills: 2, placement: 13, placementPoints: 0, totalPoints: 2 },
-      { teamId: 14, kills: 0, placement: 14, placementPoints: 0, totalPoints: 0 },
-      { teamId: 15, kills: 1, placement: 15, placementPoints: 0, totalPoints: 1 },
-      { teamId: 16, kills: 0, placement: 16, placementPoints: 0, totalPoints: 0 }
-    ],
-    match2: [
-      { teamId: 2, kills: 7, placement: 1, placementPoints: 10, totalPoints: 17 },
-      { teamId: 1, kills: 5, placement: 2, placementPoints: 6, totalPoints: 11 },
-      { teamId: 4, kills: 6, placement: 3, placementPoints: 5, totalPoints: 11 },
-      { teamId: 3, kills: 2, placement: 4, placementPoints: 4, totalPoints: 6 },
-      { teamId: 6, kills: 4, placement: 5, placementPoints: 3, totalPoints: 7 },
-      { teamId: 5, kills: 1, placement: 6, placementPoints: 2, totalPoints: 3 },
-      { teamId: 8, kills: 3, placement: 7, placementPoints: 1, totalPoints: 4 },
-      { teamId: 7, kills: 2, placement: 8, placementPoints: 1, totalPoints: 3 },
-      { teamId: 10, kills: 1, placement: 9, placementPoints: 0, totalPoints: 1 },
-      { teamId: 9, kills: 0, placement: 10, placementPoints: 0, totalPoints: 0 },
-      { teamId: 12, kills: 2, placement: 11, placementPoints: 0, totalPoints: 2 },
-      { teamId: 11, kills: 1, placement: 12, placementPoints: 0, totalPoints: 1 },
-      { teamId: 14, kills: 1, placement: 13, placementPoints: 0, totalPoints: 1 },
-      { teamId: 13, kills: 0, placement: 14, placementPoints: 0, totalPoints: 0 },
-      { teamId: 16, kills: 1, placement: 15, placementPoints: 0, totalPoints: 1 },
-      { teamId: 15, kills: 0, placement: 16, placementPoints: 0, totalPoints: 0 }
-    ],
-    match3: [
-      { teamId: 3, kills: 9, placement: 1, placementPoints: 10, totalPoints: 19 },
-      { teamId: 5, kills: 4, placement: 2, placementPoints: 6, totalPoints: 10 },
-      { teamId: 1, kills: 3, placement: 3, placementPoints: 5, totalPoints: 8 },
-      { teamId: 7, kills: 5, placement: 4, placementPoints: 4, totalPoints: 9 },
-      { teamId: 2, kills: 2, placement: 5, placementPoints: 3, totalPoints: 5 },
-      { teamId: 4, kills: 1, placement: 6, placementPoints: 2, totalPoints: 3 },
-      { teamId: 9, kills: 3, placement: 7, placementPoints: 1, totalPoints: 4 },
-      { teamId: 6, kills: 2, placement: 8, placementPoints: 1, totalPoints: 3 },
-      { teamId: 11, kills: 1, placement: 9, placementPoints: 0, totalPoints: 1 },
-      { teamId: 8, kills: 0, placement: 10, placementPoints: 0, totalPoints: 0 },
-      { teamId: 13, kills: 2, placement: 11, placementPoints: 0, totalPoints: 2 },
-      { teamId: 10, kills: 1, placement: 12, placementPoints: 0, totalPoints: 1 },
-      { teamId: 15, kills: 1, placement: 13, placementPoints: 0, totalPoints: 1 },
-      { teamId: 12, kills: 0, placement: 14, placementPoints: 0, totalPoints: 0 },
-      { teamId: 16, kills: 0, placement: 15, placementPoints: 0, totalPoints: 0 },
-      { teamId: 14, kills: 0, placement: 16, placementPoints: 0, totalPoints: 0 }
-    ],
-    match4: [
-      { teamId: 4, kills: 8, placement: 1, placementPoints: 10, totalPoints: 18 },
-      { teamId: 6, kills: 5, placement: 2, placementPoints: 6, totalPoints: 11 },
-      { teamId: 2, kills: 4, placement: 3, placementPoints: 5, totalPoints: 9 },
-      { teamId: 8, kills: 6, placement: 4, placementPoints: 4, totalPoints: 10 },
-      { teamId: 1, kills: 2, placement: 5, placementPoints: 3, totalPoints: 5 },
-      { teamId: 3, kills: 1, placement: 6, placementPoints: 2, totalPoints: 3 },
-      { teamId: 10, kills: 3, placement: 7, placementPoints: 1, totalPoints: 4 },
-      { teamId: 5, kills: 1, placement: 8, placementPoints: 1, totalPoints: 2 },
-      { teamId: 12, kills: 2, placement: 9, placementPoints: 0, totalPoints: 2 },
-      { teamId: 7, kills: 0, placement: 10, placementPoints: 0, totalPoints: 0 },
-      { teamId: 14, kills: 1, placement: 11, placementPoints: 0, totalPoints: 1 },
-      { teamId: 9, kills: 1, placement: 12, placementPoints: 0, totalPoints: 1 },
-      { teamId: 16, kills: 1, placement: 13, placementPoints: 0, totalPoints: 1 },
-      { teamId: 11, kills: 0, placement: 14, placementPoints: 0, totalPoints: 0 },
-      { teamId: 15, kills: 0, placement: 15, placementPoints: 0, totalPoints: 0 },
-      { teamId: 13, kills: 0, placement: 16, placementPoints: 0, totalPoints: 0 }
-    ],
-    match5: [
-      { teamId: 5, kills: 7, placement: 1, placementPoints: 10, totalPoints: 17 },
-      { teamId: 7, kills: 6, placement: 2, placementPoints: 6, totalPoints: 12 },
-      { teamId: 9, kills: 4, placement: 3, placementPoints: 5, totalPoints: 9 },
-      { teamId: 1, kills: 3, placement: 4, placementPoints: 4, totalPoints: 7 },
-      { teamId: 11, kills: 5, placement: 5, placementPoints: 3, totalPoints: 8 },
-      { teamId: 2, kills: 2, placement: 6, placementPoints: 2, totalPoints: 4 },
-      { teamId: 13, kills: 2, placement: 7, placementPoints: 1, totalPoints: 3 },
-      { teamId: 3, kills: 1, placement: 8, placementPoints: 1, totalPoints: 2 },
-      { teamId: 15, kills: 2, placement: 9, placementPoints: 0, totalPoints: 2 },
-      { teamId: 4, kills: 1, placement: 10, placementPoints: 0, totalPoints: 1 },
-      { teamId: 16, kills: 1, placement: 11, placementPoints: 0, totalPoints: 1 },
-      { teamId: 6, kills: 0, placement: 12, placementPoints: 0, totalPoints: 0 },
-      { teamId: 12, kills: 1, placement: 13, placementPoints: 0, totalPoints: 1 },
-      { teamId: 8, kills: 0, placement: 14, placementPoints: 0, totalPoints: 0 },
-      { teamId: 14, kills: 0, placement: 15, placementPoints: 0, totalPoints: 0 },
-      { teamId: 10, kills: 0, placement: 16, placementPoints: 0, totalPoints: 0 }
-    ],
-    match6: [
-      { teamId: 6, kills: 8, placement: 1, placementPoints: 10, totalPoints: 18 },
-      { teamId: 8, kills: 5, placement: 2, placementPoints: 6, totalPoints: 11 },
-      { teamId: 10, kills: 6, placement: 3, placementPoints: 5, totalPoints: 11 },
-      { teamId: 12, kills: 4, placement: 4, placementPoints: 4, totalPoints: 8 },
-      { teamId: 14, kills: 3, placement: 5, placementPoints: 3, totalPoints: 6 },
-      { teamId: 16, kills: 2, placement: 6, placementPoints: 2, totalPoints: 4 },
-      { teamId: 1, kills: 1, placement: 7, placementPoints: 1, totalPoints: 2 },
-      { teamId: 15, kills: 2, placement: 8, placementPoints: 1, totalPoints: 3 },
-      { teamId: 2, kills: 1, placement: 9, placementPoints: 0, totalPoints: 1 },
-      { teamId: 3, kills: 0, placement: 10, placementPoints: 0, totalPoints: 0 },
-      { teamId: 4, kills: 1, placement: 11, placementPoints: 0, totalPoints: 1 },
-      { teamId: 5, kills: 0, placement: 12, placementPoints: 0, totalPoints: 0 },
-      { teamId: 7, kills: 1, placement: 13, placementPoints: 0, totalPoints: 1 },
-      { teamId: 9, kills: 0, placement: 14, placementPoints: 0, totalPoints: 0 },
-      { teamId: 11, kills: 0, placement: 15, placementPoints: 0, totalPoints: 0 },
-      { teamId: 13, kills: 0, placement: 16, placementPoints: 0, totalPoints: 0 }
-    ]
+    match1: [[1,8,1],[2,6,2],[3,4,3],[4,3,4],[5,5,5],[6,2,6],[7,1,7],[8,3,8],[9,2,9],[10,1,10],[11,0,11],[12,1,12],[13,2,13],[14,0,14],[15,1,15],[16,0,16]],
+    match2: [[2,7,1],[1,5,2],[4,6,3],[3,2,4],[6,4,5],[5,1,6],[8,3,7],[7,2,8],[10,1,9],[9,0,10],[12,2,11],[11,1,12],[14,1,13],[13,0,14],[16,1,15],[15,0,16]],
+    match3: [[3,9,1],[5,4,2],[1,3,3],[7,5,4],[2,2,5],[4,1,6],[9,3,7],[6,2,8],[11,1,9],[8,0,10],[13,2,11],[10,1,12],[15,1,13],[12,0,14],[16,0,15],[14,0,16]],
+    match4: [[4,8,1],[6,5,2],[2,4,3],[8,6,4],[1,2,5],[3,1,6],[10,3,7],[5,1,8],[12,2,9],[7,0,10],[14,1,11],[9,1,12],[16,1,13],[11,0,14],[15,0,15],[13,0,16]],
+    match5: [[5,7,1],[7,6,2],[9,4,3],[1,3,4],[11,5,5],[2,2,6],[13,2,7],[3,1,8],[15,2,9],[4,1,10],[16,1,11],[6,0,12],[12,1,13],[8,0,14],[14,0,15],[10,0,16]],
+    match6: [[6,8,1],[8,5,2],[10,6,3],[12,4,4],[14,3,5],[16,2,6],[1,1,7],[15,2,8],[2,1,9],[3,0,10],[4,1,11],[5,0,12],[7,1,13],[9,0,14],[11,0,15],[13,0,16]]
   },
   day2: {
-    match1: [
-      { teamId: 7, kills: 9, placement: 1, placementPoints: 10, totalPoints: 19 },
-      { teamId: 9, kills: 5, placement: 2, placementPoints: 6, totalPoints: 11 },
-      { teamId: 11, kills: 4, placement: 3, placementPoints: 5, totalPoints: 9 },
-      { teamId: 13, kills: 6, placement: 4, placementPoints: 4, totalPoints: 10 },
-      { teamId: 15, kills: 3, placement: 5, placementPoints: 3, totalPoints: 6 },
-      { teamId: 1, kills: 2, placement: 6, placementPoints: 2, totalPoints: 4 },
-      { teamId: 3, kills: 2, placement: 7, placementPoints: 1, totalPoints: 3 },
-      { teamId: 5, kills: 1, placement: 8, placementPoints: 1, totalPoints: 2 },
-      { teamId: 2, kills: 1, placement: 9, placementPoints: 0, totalPoints: 1 },
-      { teamId: 4, kills: 0, placement: 10, placementPoints: 0, totalPoints: 0 },
-      { teamId: 6, kills: 1, placement: 11, placementPoints: 0, totalPoints: 1 },
-      { teamId: 8, kills: 0, placement: 12, placementPoints: 0, totalPoints: 0 },
-      { teamId: 10, kills: 1, placement: 13, placementPoints: 0, totalPoints: 1 },
-      { teamId: 12, kills: 0, placement: 14, placementPoints: 0, totalPoints: 0 },
-      { teamId: 14, kills: 0, placement: 15, placementPoints: 0, totalPoints: 0 },
-      { teamId: 16, kills: 0, placement: 16, placementPoints: 0, totalPoints: 0 }
-    ],
-    match2: [
-      { teamId: 8, kills: 7, placement: 1, placementPoints: 10, totalPoints: 17 },
-      { teamId: 10, kills: 6, placement: 2, placementPoints: 6, totalPoints: 12 },
-      { teamId: 12, kills: 5, placement: 3, placementPoints: 5, totalPoints: 10 },
-      { teamId: 14, kills: 4, placement: 4, placementPoints: 4, totalPoints: 8 },
-      { teamId: 16, kills: 3, placement: 5, placementPoints: 3, totalPoints: 6 },
-      { teamId: 2, kills: 2, placement: 6, placementPoints: 2, totalPoints: 4 },
-      { teamId: 4, kills: 3, placement: 7, placementPoints: 1, totalPoints: 4 },
-      { teamId: 6, kills: 1, placement: 8, placementPoints: 1, totalPoints: 2 },
-      { teamId: 1, kills: 1, placement: 9, placementPoints: 0, totalPoints: 1 },
-      { teamId: 3, kills: 0, placement: 10, placementPoints: 0, totalPoints: 0 },
-      { teamId: 5, kills: 1, placement: 11, placementPoints: 0, totalPoints: 1 },
-      { teamId: 7, kills: 0, placement: 12, placementPoints: 0, totalPoints: 0 },
-      { teamId: 9, kills: 1, placement: 13, placementPoints: 0, totalPoints: 1 },
-      { teamId: 11, kills: 0, placement: 14, placementPoints: 0, totalPoints: 0 },
-      { teamId: 13, kills: 0, placement: 15, placementPoints: 0, totalPoints: 0 },
-      { teamId: 15, kills: 0, placement: 16, placementPoints: 0, totalPoints: 0 }
-    ],
-    match3: [
-      { teamId: 9, kills: 8, placement: 1, placementPoints: 10, totalPoints: 18 },
-      { teamId: 11, kills: 5, placement: 2, placementPoints: 6, totalPoints: 11 },
-      { teamId: 13, kills: 4, placement: 3, placementPoints: 5, totalPoints: 9 },
-      { teamId: 15, kills: 6, placement: 4, placementPoints: 4, totalPoints: 10 },
-      { teamId: 1, kills: 3, placement: 5, placementPoints: 3, totalPoints: 6 },
-      { teamId: 3, kills: 2, placement: 6, placementPoints: 2, totalPoints: 4 },
-      { teamId: 5, kills: 2, placement: 7, placementPoints: 1, totalPoints: 3 },
-      { teamId: 7, kills: 1, placement: 8, placementPoints: 1, totalPoints: 2 },
-      { teamId: 2, kills: 1, placement: 9, placementPoints: 0, totalPoints: 1 },
-      { teamId: 4, kills: 0, placement: 10, placementPoints: 0, totalPoints: 0 },
-      { teamId: 6, kills: 1, placement: 11, placementPoints: 0, totalPoints: 1 },
-      { teamId: 8, kills: 0, placement: 12, placementPoints: 0, totalPoints: 0 },
-      { teamId: 10, kills: 1, placement: 13, placementPoints: 0, totalPoints: 1 },
-      { teamId: 12, kills: 0, placement: 14, placementPoints: 0, totalPoints: 0 },
-      { teamId: 14, kills: 0, placement: 15, placementPoints: 0, totalPoints: 0 },
-      { teamId: 16, kills: 0, placement: 16, placementPoints: 0, totalPoints: 0 }
-    ],
-    match4: [
-      { teamId: 10, kills: 7, placement: 1, placementPoints: 10, totalPoints: 17 },
-      { teamId: 12, kills: 6, placement: 2, placementPoints: 6, totalPoints: 12 },
-      { teamId: 14, kills: 5, placement: 3, placementPoints: 5, totalPoints: 10 },
-      { teamId: 16, kills: 4, placement: 4, placementPoints: 4, totalPoints: 8 },
-      { teamId: 2, kills: 3, placement: 5, placementPoints: 3, totalPoints: 6 },
-      { teamId: 4, kills: 2, placement: 6, placementPoints: 2, totalPoints: 4 },
-      { teamId: 6, kills: 3, placement: 7, placementPoints: 1, totalPoints: 4 },
-      { teamId: 8, kills: 1, placement: 8, placementPoints: 1, totalPoints: 2 },
-      { teamId: 1, kills: 1, placement: 9, placementPoints: 0, totalPoints: 1 },
-      { teamId: 3, kills: 0, placement: 10, placementPoints: 0, totalPoints: 0 },
-      { teamId: 5, kills: 1, placement: 11, placementPoints: 0, totalPoints: 1 },
-      { teamId: 7, kills: 0, placement: 12, placementPoints: 0, totalPoints: 0 },
-      { teamId: 9, kills: 1, placement: 13, placementPoints: 0, totalPoints: 1 },
-      { teamId: 11, kills: 0, placement: 14, placementPoints: 0, totalPoints: 0 },
-      { teamId: 13, kills: 0, placement: 15, placementPoints: 0, totalPoints: 0 },
-      { teamId: 15, kills: 0, placement: 16, placementPoints: 0, totalPoints: 0 }
-    ],
-    match5: [
-      { teamId: 11, kills: 8, placement: 1, placementPoints: 10, totalPoints: 18 },
-      { teamId: 13, kills: 5, placement: 2, placementPoints: 6, totalPoints: 11 },
-      { teamId: 15, kills: 4, placement: 3, placementPoints: 5, totalPoints: 9 },
-      { teamId: 1, kills: 6, placement: 4, placementPoints: 4, totalPoints: 10 },
-      { teamId: 3, kills: 3, placement: 5, placementPoints: 3, totalPoints: 6 },
-      { teamId: 5, kills: 2, placement: 6, placementPoints: 2, totalPoints: 4 },
-      { teamId: 7, kills: 2, placement: 7, placementPoints: 1, totalPoints: 3 },
-      { teamId: 9, kills: 1, placement: 8, placementPoints: 1, totalPoints: 2 },
-      { teamId: 2, kills: 1, placement: 9, placementPoints: 0, totalPoints: 1 },
-      { teamId: 4, kills: 0, placement: 10, placementPoints: 0, totalPoints: 0 },
-      { teamId: 6, kills: 1, placement: 11, placementPoints: 0, totalPoints: 1 },
-      { teamId: 8, kills: 0, placement: 12, placementPoints: 0, totalPoints: 0 },
-      { teamId: 10, kills: 1, placement: 13, placementPoints: 0, totalPoints: 1 },
-      { teamId: 12, kills: 0, placement: 14, placementPoints: 0, totalPoints: 0 },
-      { teamId: 14, kills: 0, placement: 15, placementPoints: 0, totalPoints: 0 },
-      { teamId: 16, kills: 0, placement: 16, placementPoints: 0, totalPoints: 0 }
-    ],
-    match6: [
-      { teamId: 12, kills: 9, placement: 1, placementPoints: 10, totalPoints: 19 },
-      { teamId: 14, kills: 5, placement: 2, placementPoints: 6, totalPoints: 11 },
-      { teamId: 16, kills: 4, placement: 3, placementPoints: 5, totalPoints: 9 },
-      { teamId: 2, kills: 6, placement: 4, placementPoints: 4, totalPoints: 10 },
-      { teamId: 4, kills: 3, placement: 5, placementPoints: 3, totalPoints: 6 },
-      { teamId: 6, kills: 2, placement: 6, placementPoints: 2, totalPoints: 4 },
-      { teamId: 8, kills: 2, placement: 7, placementPoints: 1, totalPoints: 3 },
-      { teamId: 10, kills: 1, placement: 8, placementPoints: 1, totalPoints: 2 },
-      { teamId: 1, kills: 1, placement: 9, placementPoints: 0, totalPoints: 1 },
-      { teamId: 3, kills: 0, placement: 10, placementPoints: 0, totalPoints: 0 },
-      { teamId: 5, kills: 1, placement: 11, placementPoints: 0, totalPoints: 1 },
-      { teamId: 7, kills: 0, placement: 12, placementPoints: 0, totalPoints: 0 },
-      { teamId: 9, kills: 1, placement: 13, placementPoints: 0, totalPoints: 1 },
-      { teamId: 11, kills: 0, placement: 14, placementPoints: 0, totalPoints: 0 },
-      { teamId: 13, kills: 0, placement: 15, placementPoints: 0, totalPoints: 0 },
-      { teamId: 15, kills: 0, placement: 16, placementPoints: 0, totalPoints: 0 }
-    ]
+    match1: [[7,9,1],[9,5,2],[11,4,3],[13,6,4],[15,3,5],[1,2,6],[3,2,7],[5,1,8],[2,1,9],[4,0,10],[6,1,11],[8,0,12],[10,1,13],[12,0,14],[14,0,15],[16,0,16]],
+    match2: [[8,7,1],[10,6,2],[12,5,3],[14,4,4],[16,3,5],[2,2,6],[4,3,7],[6,1,8],[1,1,9],[3,0,10],[5,1,11],[7,0,12],[9,1,13],[11,0,14],[13,0,15],[15,0,16]],
+    match3: [[9,8,1],[11,5,2],[13,4,3],[15,6,4],[1,3,5],[3,2,6],[5,2,7],[7,1,8],[2,1,9],[4,0,10],[6,1,11],[8,0,12],[10,1,13],[12,0,14],[14,0,15],[16,0,16]],
+    match4: [[10,7,1],[12,6,2],[14,5,3],[16,4,4],[2,3,5],[4,2,6],[6,3,7],[8,1,8],[1,1,9],[3,0,10],[5,1,11],[7,0,12],[9,1,13],[11,0,14],[13,0,15],[15,0,16]],
+    match5: [[11,8,1],[13,5,2],[15,4,3],[1,6,4],[3,3,5],[5,2,6],[7,2,7],[9,1,8],[2,1,9],[4,0,10],[6,1,11],[8,0,12],[10,1,13],[12,0,14],[14,0,15],[16,0,16]],
+    match6: [[12,9,1],[14,5,2],[16,4,3],[2,6,4],[4,3,5],[6,2,6],[8,2,7],[10,1,8],[1,1,9],[3,0,10],[5,1,11],[7,0,12],[9,1,13],[11,0,14],[13,0,15],[15,0,16]]
   },
   day3: {
-    match1: [
-      { teamId: 13, kills: 8, placement: 1, placementPoints: 10, totalPoints: 18 },
-      { teamId: 15, kills: 6, placement: 2, placementPoints: 6, totalPoints: 12 },
-      { teamId: 1, kills: 5, placement: 3, placementPoints: 5, totalPoints: 10 },
-      { teamId: 3, kills: 4, placement: 4, placementPoints: 4, totalPoints: 8 },
-      { teamId: 5, kills: 3, placement: 5, placementPoints: 3, totalPoints: 6 },
-      { teamId: 7, kills: 2, placement: 6, placementPoints: 2, totalPoints: 4 },
-      { teamId: 9, kills: 2, placement: 7, placementPoints: 1, totalPoints: 3 },
-      { teamId: 11, kills: 1, placement: 8, placementPoints: 1, totalPoints: 2 },
-      { teamId: 2, kills: 1, placement: 9, placementPoints: 0, totalPoints: 1 },
-      { teamId: 4, kills: 0, placement: 10, placementPoints: 0, totalPoints: 0 },
-      { teamId: 6, kills: 1, placement: 11, placementPoints: 0, totalPoints: 1 },
-      { teamId: 8, kills: 0, placement: 12, placementPoints: 0, totalPoints: 0 },
-      { teamId: 10, kills: 1, placement: 13, placementPoints: 0, totalPoints: 1 },
-      { teamId: 12, kills: 0, placement: 14, placementPoints: 0, totalPoints: 0 },
-      { teamId: 14, kills: 0, placement: 15, placementPoints: 0, totalPoints: 0 },
-      { teamId: 16, kills: 0, placement: 16, placementPoints: 0, totalPoints: 0 }
-    ],
-    // TODO: Add matches 2-6 for day 3
-    match2: [],
+    match1: [[13,8,1],[15,6,2],[1,5,3],[3,4,4],[5,3,5],[7,2,6],[9,2,7],[11,1,8],[2,1,9],[4,0,10],[6,1,11],[8,0,12],[10,1,13],[12,0,14],[14,0,15],[16,0,16]],
+    match2: [], 
     match3: [],
     match4: [],
     match5: [],
@@ -328,7 +111,21 @@ export const matchResults = {
   }
 };
 
-// CHANGE THIS: Calculate overall standings based on all matches
+// Convert raw data to full match results using helper functions
+export const matchResults = {};
+Object.keys(rawMatchData).forEach(day => {
+  matchResults[day] = {};
+  Object.keys(rawMatchData[day]).forEach(match => {
+    if (rawMatchData[day][match].length > 0) {
+      matchResults[day][match] = rawMatchData[day][match].map(([teamId, kills, placement]) => 
+        createMatchResult(teamId, kills, placement)
+      );
+    } else {
+      matchResults[day][match] = [];
+    }
+  });
+});
+
 export const calculateOverallStandings = () => {
   const standings = teamsData.map(team => {
     let totalPoints = 0;
@@ -336,7 +133,6 @@ export const calculateOverallStandings = () => {
     let placementPoints = 0;
     let wwcdCount = 0;
 
-    // Calculate totals from all matches
     Object.values(matchResults).forEach(day => {
       Object.values(day).forEach(match => {
         const teamResult = match.find(result => result.teamId === team.id);
@@ -354,23 +150,51 @@ export const calculateOverallStandings = () => {
       totalPoints,
       totalKills,
       placementPoints,
-      killPoints: totalKills, // 1 kill = 1 point
+      killPoints: totalKills,
       wwcdCount
     };
   });
 
-  // Sort by total points (highest first)
   return standings.sort((a, b) => b.totalPoints - a.totalPoints);
 };
 
-// Tournament info
+
 export const tournamentInfo = {
-  // CHANGE THIS: Update tournament details
   name: "BGMI Pro League Season 3",
   prizePool: "₹50,00,000",
-  teams: 16,
-  currentDay: 2,
-  totalDays: 3,
+  teams: teamsData.length,
+  currentDay: 3,
+  totalDays: tournamentConfig.totalDays,
   startDate: "Dec 15, 2024",
   status: "Live"
+};
+
+export const getCompletedMatchesCount = () => {
+  let count = 0;
+  Object.values(matchCompletionStatus).forEach(day => {
+    Object.values(day).forEach(match => {
+      if (match) count++;
+    });
+  });
+  return count;
+};
+
+export const getTotalMatchesCount = () => {
+  return tournamentConfig.totalDays * tournamentConfig.matchesPerDay;
+};
+
+
+export const addMatchResult = (day, matchNumber, results) => {
+  if (!matchResults[day]) {
+    matchResults[day] = {};
+  }
+  matchResults[day][`match${matchNumber}`] = results.map(([teamId, kills, placement]) => 
+    createMatchResult(teamId, kills, placement)
+  );
+  
+
+  if (!matchCompletionStatus[day]) {
+    matchCompletionStatus[day] = {};
+  }
+  matchCompletionStatus[day][`match${matchNumber}`] = true;
 };
