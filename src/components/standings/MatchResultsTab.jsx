@@ -44,9 +44,6 @@ const MatchResultsTab = ({
                   <span className="ml-2">
                     {day === 'day1' ? 'Day 1' : day === 'day2' ? 'Day 2' : 'Day 3'}
                   </span>
-                  <span className="ml-1 text-xs opacity-75">
-                    ({completedMatches}/{totalMatches})
-                  </span>
                 </span>
               </button>
             );
