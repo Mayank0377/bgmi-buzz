@@ -66,7 +66,7 @@ const Navigation = () => {
                 <span className="mr-2">📊</span>
                 Standings
               </a>
-              <a href="#" className="text-gray-300 hover:bg-gray-700 hover:text-white px-4 py-2 rounded-md text-sm font-medium flex items-center">
+              <a href="/teams" className="text-gray-300 hover:bg-gray-700 hover:text-white px-4 py-2 rounded-md text-sm font-medium flex items-center">
                 <span className="mr-2">👥</span>
                 Teams
               </a>

@@ -4,6 +4,7 @@ import HomePage from './pages/HomePage';
 import StandingsPage from './pages/StandingsPage';
 import AdminPage from './pages/AdminPage';
 import AdminDashboard from './pages/AdminDashboard';
+import TeamsPage from './pages/TeamsPage';
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
           <Route path="/standings" element={<StandingsPage />} />
           <Route path="/admin" element={<AdminPage />} />
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
+          <Route path="/teams" element={<TeamsPage />} />
         </Routes>
       </div>
     </Router>
